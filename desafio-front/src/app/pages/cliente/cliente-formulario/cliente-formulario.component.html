@@ -1,0 +1,192 @@
+<form [formGroup]="form">
+    <p-panel [header]="titulo">
+
+        <ng-template pTemplate="icons">
+            <button pButton routerLink="/clientes" label="Voltar"><i class="pi pi-directions-alt"></i></button>
+        </ng-template>
+
+        <p-fieldset legend="Dados Pessoas">
+
+            <div class="p-fluid p-grid">
+                <div class=" p-col-12 p-md-6">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" pInputText formControlName="nome" [(ngModel)]="cliente.nome">
+                </div>
+            </div>
+            <div class="p-fluid p-grid">
+                <div class=" p-col-12 p-md-2">
+                    <label for="cpf">CPF:</label>
+                    <p-inputMask [(ngModel)]="cliente.cpf" id="cpf" mask="999.999.999-99" formControlName="cpf">
+                    </p-inputMask>
+                </div>
+            </div>
+        </p-fieldset>
+        <br />
+
+        <p-fieldset legend="Endereço">
+            <div class="p-fluid p-grid">
+                <div class="p-field p-col-12 p-md-6">
+                    <div class="p-fluid p-grid">
+                        <div class=" p-col-12 p-md-4">
+                            <label for="cep">CEP:</label>
+                            <p-inputMask id="cep" [(ngModel)]="cliente.endereco.cep" mask="99999-999"
+                                formControlName="cep" (keyup)="buscarEnderecoPorCep($event)"></p-inputMask>
+                        </div>
+                    </div>
+
+                    <div class="p-fluid p-grid">
+                        <div class=" p-col-12 p-md-11">
+                            <label for="bairro">Bairro:</label>
+                            <input type="text" id="bairro" pInputText formControlName="bairro"
+                                [(ngModel)]="cliente.endereco.bairro">
+                        </div>
+                    </div>
+
+                    <div class="p-fluid p-grid">
+                        <div class=" p-col-12 p-md-11">
+                            <label for="logradouro">Logradouro:</label>
+                            <input type="text" id="logradouro" pInputText formControlName="logradouro"
+                                [(ngModel)]="cliente.endereco.logradouro">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-field p-col-12 p-md-6">
+
+                    <div class="p-fluid p-grid">
+                        <div class=" p-col-12 p-md-11">
+                            <label>UF:</label>
+                            <p-dropdown [options]="ufs" [filter]="true" placeholder="Selecione um UF" formControlName="uf"
+                                [(ngModel)]="cliente.endereco.uf"></p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="p-fluid p-grid">
+                        <div class=" p-col-12 p-md-11">
+                            <label for="cidade">Cidade:</label>
+                            <input type="text" id="cidade" pInputText formControlName="cidade"
+                                [(ngModel)]="cliente.endereco.cidade">
+                        </div>
+                    </div>
+
+                    <div class="p-fluid p-grid">
+                        <div class=" p-col-12 p-md-11">
+                            <label for="nome">Complemento (Opcional): </label>
+                            <input type="text" id="nome" pInputText formControlName="complemento"
+                                [(ngModel)]="cliente.endereco.complemento">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </p-fieldset>
+
+        <br />
+        <p-fieldset legend="Contato">
+
+            <div class="p-fluid p-grid">
+                <div class=" p-col-12 p-md-12">
+                    <label>Tipo de telefone:</label>
+                </div>
+                <div class=" p-col-4 p-md-2">
+                    <p-radioButton name="tipoTelefone" value="RESIDENCIAL" [(ngModel)]="contato.tipo" inputId="tipo1"
+                        [ngModelOptions]="{standalone: true}">
+                    </p-radioButton>
+                    <label for="tipo1">Residencial</label>
+                </div>
+                <div class=" p-col-4 p-md-2">
+                    <p-radioButton name="tipoTelefone" value="COMERCIAL" [(ngModel)]="contato.tipo" inputId="tipo2"
+                        [ngModelOptions]="{standalone: true}">
+                    </p-radioButton>
+                    <label for="tipo2">Comercial</label>
+                </div>
+                <div class=" p-col-4 p-md-2">
+                    <p-radioButton name="tipoTelefone" value="CELULAR" [(ngModel)]="contato.tipo" inputId="tipo3"
+                        [ngModelOptions]="{standalone: true}">
+                    </p-radioButton>
+                    <label for="tipo3">Celular</label>
+                </div>
+            </div>
+
+            <div class="p-fluid p-grid">
+                <div class=" p-col-12 p-md-3" >
+                    <label for="telefone">Telefone:</label>
+                    <p-inputMask [disabled]="!contato.tipo" id="telefone" [(ngModel)]="contato.numero" [mask]="isCelular()"
+                        [ngModelOptions]="{standalone: true}">
+                    </p-inputMask>
+                    
+                </div>
+                <div class=" p-col-12 p-md-9">
+                    <br />
+                    <p-button class="p-button-raised p-button-success" icon="pi pi-save" (click)="adicionarTelefone()">
+                    </p-button>
+                </div>
+            </div>
+
+            
+            <div class="p-fluid p-grid">
+                <div class=" p-col-12 p-md-12">
+                    <p-table [value]="cliente.contato">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Telefone</th>
+                                <th>Tipo de Telefone</th>
+                                <th>Ação</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-contato>
+                            <tr>
+                                <td>{{contato.numero}}</td>
+                                <td>{{contato.tipo}}</td>
+                                <td>
+                                    <button pButton pRipple type="button" class="p-button-raised p-button-danger"
+                                        icon="pi pi-trash" (click)="removerTelefone(contato.numero)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <div class="p-fluid p-grid">
+                <div class=" p-col-12 p-md-3">
+                    <label for="telefone">E-mail:</label>
+                    <input type="text" id="nome" pInputText [(ngModel)]="email" [ngModelOptions]="{standalone: true}">
+                </div>
+                <div class=" p-col-12 p-md-9">
+                    <br />
+                    <p-button class="p-button-raised p-button-success" icon="pi pi-save" (click)="adicionarEmail()">
+                    </p-button>
+                </div>
+            </div>
+
+            <div class="p-fluid p-grid">
+                <div class=" p-col-12 p-md-12">
+                    <p-table [value]="cliente.emails">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Email</th>
+                                <th>Ação</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-email>
+                            <tr>
+                                <td>{{email}}</td>
+                                <td>
+                                    <button pButton pRipple type="button" class="p-button-raised p-button-danger"
+                                        icon="pi pi-trash" (click)="removerEmail(email)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </p-fieldset>
+
+        <br />
+        <br />
+
+        <div class="p-fluid p-grid p-jc-center">
+            <button pButton pRipple type="button" [label]="acao" class="p-button-raised" (click)="save()"></button>
+        </div>
+    </p-panel>
+</form>
